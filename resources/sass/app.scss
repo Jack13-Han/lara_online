@@ -1,0 +1,32 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+@import "~@fortawesome/fontawesome-free/css/all.min.css";
+@import "~venobox/dist/venobox.min.css";
+
+
+.img-del-btn{
+    margin-top: -55px;
+}
+
+.uploader-ui{
+    width: 100px;
+    height: 100px;
+}
+
+//.list-thumbnail:nth-of-type(1){
+//    margin-left: 0 !important;
+//}
+
+td [data-gall]:first-child .list-thumbnail{
+    margin-left: 0;
+}
+
+.list-thumbnail{
+    margin-left: -20px;
+}
