@@ -32,6 +32,7 @@
                                     <th>#</th>
                                     <th>Title</th>
                                     <th>Owner</th>
+                                    <th>Photo</th>
                                     <th>Control</th>
                                     <th>Created</th>
 
@@ -46,6 +47,19 @@
                                     <td>
                                         {{$category->user->name ?? "Unknown User "}}
                                     </td>
+
+                                    <td>
+                                        @forelse($category->photos()->latest('id')->limit(3)->get() as $photo)
+                                            <a class="venobox" data-gall="img{{$category->id}}" href="{{asset('storage/photo/'.$photo->name)}}">
+                                                <img src="{{asset('storage/thumbnail/'.$photo->name)}}" height="40" class="rounded-circle border-3 border-white shadow-sm list-thumbnail" alt="image alt"/>
+                                            </a>
+                                            {{--                                            <img src="{{asset('storage/thumbnail/'.$photo->name)}}" height="30" class="rounded " alt="">--}}
+                                        @empty
+                                            <p class="text-black-50">No Photo</p>
+                                        @endforelse
+                                    </td>
+
+
                                     <td>
                                        <div class="btn-group">
                                            <form action="{{route('category.destroy',$category->id)}} " method="post" >

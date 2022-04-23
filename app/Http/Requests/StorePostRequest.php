@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StorePostRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+     return   Gate::authorize('create',Post::class);
     }
 
     /**
@@ -24,7 +26,20 @@ class StorePostRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "title"=> "required|unique:posts,title|min:3",
+            "category" =>"required|integer|exists:categories,id",
+            "description"=> "required|min:20",
+            "photos"=>"required|",
+            "photos.*"=> "required|max:3000|mimes:jpg,png",//တစ်ဖိုင်ချင်းစီ ဝင်စစ် တာ
+            "tags"=>"required",
+            "tags.*"=>"integer|exists:tags,id",
+        ];
+    }
+
+    public  function messages()
+    {
+        return [
+//            "title.required" =>  ,
         ];
     }
 }

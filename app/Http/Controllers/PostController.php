@@ -7,6 +7,8 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Photo;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -20,10 +22,7 @@ class PostController extends Controller
      */
     public function index()
     {
-       $posts = Post::when(isset(request()->search),function ($query){
-           $search=request()->search;
-           $query->where('title',"LIKE","%$search%")->orWhere('description',"LIKE","%$search%");
-       })->latest('id')->paginate(5) ;
+       $posts = Post::search()->latest('id')->paginate(5) ;
 
 
 
@@ -37,6 +36,7 @@ class PostController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create',Post::class);
        return view('post.create');
     }
 
@@ -49,58 +49,66 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
 
+//       DB::transaction(function () use($request){
 
-        $request->validate([
-           "title"=> "required|unique:posts,title|min:3",
-            "category" =>"required|integer|exists:categories,id",
-            "description"=> "required|min:20",
-            "photo"=>"required|",
-            "photo.*"=> "required|max:3000|mimes:jpg,png",//တစ်ဖိုင်ချင်းစီ ဝင်စစ် တာ
-            "tags"=>"required",
-            "tags.*"=>"integer|exists: tags,id",
-        ]);
+        DB::beginTransaction();
+        try {
 
-        $post = new Post();
-        $post->title = $request->title;
-        $post->slug = Str::slug($request->title);
-        $post->description =$request->description;
-        $post->excerpt = Str::words($request->description,20);
-        $post->category_id =$request->category;
-        $post->user_id =Auth::id();
-        $post->is_publish = true;
-        $post->save();
+            $post = new Post();
+            $post->title = $request->title;
+            $post->slug =$request->title;
+            $post->description =$request->description;
+            $post->excerpt = Str::words($request->description,20);
+            $post->category_id =$request->category;
+            $post->user_id =Auth::id();
+            $post->is_publish = true;
+            $post->save();
 
-        //save tag to  pivot table
-        $post->tags()->attach($request->tags);
+            logger("save post");
 
-        //make create folder
-        if (!Storage::exists('public/thumbnail')){
-            Storage::makeDirectory('public/thumbnail');
-        }
+            //save tag to  pivot table
+            $post->tags()->attach($request->tags);
+            logger("save Post_tag");
 
-        if ($request->hasFile('photos')){
-            foreach ($request->file('photos') as $photo){
-
-                //store file in storage
-                $newName = uniqid()."_photo.".$photo->extension();
-                $photo->storeAs('public/photo/',$newName) ;//storage
-
-                //making thumbnail
-                $img= Image::make($photo);
-                //reduce size
-                $img->fit('200','200');
-                $img->save('storage/thumbnail/'.$newName);//public
-
-                //save in database
-                $photo = new Photo();
-                $photo->name =$newName;
-                $photo->post_id= $post->id;
-                $photo->user_id = Auth::id();
-                $photo->save();
-
-
+            //make create folder
+            if (!Storage::exists('public/thumbnail')){
+                Storage::makeDirectory('public/thumbnail');
             }
+
+            if ($request->hasFile('photos')){
+                foreach ($request->file('photos') as $photo){
+
+                    //store file in storage
+                    $newName = uniqid()."_photo.".$photo->extension();
+                    $photo->storeAs('public/photo/',$newName) ;//storage
+
+                    //making thumbnail
+                    $img= Image::make($photo);
+                    //reduce size
+                    $img->fit('200','200');
+                    $img->save('storage/thumbnail/'.$newName);//public
+
+                    //save in database
+                    $photo = new Photo();
+                    $photo->name =$newName;
+                    $photo->post_id= $post->id;
+                    $photo->user_id = Auth::id();
+                    $photo->save();
+                    logger("save photo");
+
+
+                }
+            }
+
+            DB::commit();
+
+        }catch (\Exception  $e){
+            DB::rollBack();
+            throw $e;
         }
+
+
+//       });
 
 
         return redirect()->route('post.index')->with('status','Post Created');
@@ -114,7 +122,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-
+        return $post;
         return view('post.show',compact('post'));
     }
 
@@ -126,7 +134,16 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-       return view('post.edit',compact('post'));
+
+//        if (! Gate::allows("update-post",$post)){
+//            return abort(403);
+//
+//        }
+
+//        Gate::authorize('update-post',$post);
+
+        Gate::authorize("update",$post);
+        return view('post.edit',compact('post'));
     }
 
     /**
@@ -138,12 +155,6 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $request->validate([
-            "title"=> "required|unique:posts,title,$post->id|min:3",
-            "category" =>"required|integer|exists:categories,id",
-            "description"=> "required|min:20",
-        ]);
-
         $post->title = $request->title;
         $post->slug = Str::slug($request->title);
         $post->description =$request->description;
@@ -171,6 +182,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        Gate::authorize("delete",$post);
+
         foreach ($post->photos as $photo){
             //file delete
             Storage::delete('public/photo'.$photo->name);

@@ -15,14 +15,15 @@
                             @method('put')
                         </form>
 
-                            <div class="mb-3">
-                                <label for="" class="form-label">Post Title</label>
-                                <input type="text" form="updateForm" class="form-control @error('title') is-invalid @enderror " value="{{ old('title',$post->title) }}" name="title">
+                        <x-input input-title="Post Title" form-id="updateForm" value="{{$post->title}}" name="title"></x-input>
+{{--                            <div class="mb-3">--}}
+{{--                                <label for="" class="form-label">Post Title</label>--}}
+{{--                                <input type="text" form="updateForm" class="form-control @error('title') is-invalid @enderror " value="{{ old('title',$post->title) }}" name="title">--}}
 
-                                @error('title')
-                                <p class="text-danger small">{{$message}}</p>
-                                @enderror
-                            </div>
+{{--                                @error('title')--}}
+{{--                                <p class="text-danger small">{{$message}}</p>--}}
+{{--                                @enderror--}}
+{{--                            </div>--}}
 
                             <div class="mb-3">
                                 <label for="" class="form-label">Select Category</label>

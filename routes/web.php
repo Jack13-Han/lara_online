@@ -22,7 +22,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function (){
-    Route::resource("category",\App\Http\Controllers\CategoryController::class);
+    Route::resource("category",\App\Http\Controllers\CategoryController::class)->middleware('isAdmin');
     Route::resource("post",\App\Http\Controllers\PostController::class);
     Route::resource('photo',\App\Http\Controllers\PhotoController::class);
     Route::resource("tag",\App\Http\Controllers\TagController::class);

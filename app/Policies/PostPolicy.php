@@ -10,6 +10,11 @@ class PostPolicy
 {
     use HandlesAuthorization;
 
+
+    public function before(User $user){
+        return $user->role == "admin";
+    }
+
     /**
      * Determine whether the user can view any models.
      *
@@ -41,7 +46,9 @@ class PostPolicy
      */
     public function create(User $user)
     {
-        //
+//        $allowUserId=[1,2,3];
+//       return   in_array($user->id,$allowUserId);
+        return true;
     }
 
     /**
@@ -53,7 +60,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post)
     {
-        //
+        return $user->id === $post->user_id;
     }
 
     /**
@@ -65,7 +72,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post)
     {
-        //
+        return $user->id === $post->user_id;
     }
 
     /**

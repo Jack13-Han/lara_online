@@ -34,33 +34,58 @@
                     <ul class="navbar-nav me-auto">
                         @auth
                         <li class="nav-item">
-                            <a class="nav-link {{route('home') == request()->url()? 'active':'' }}" aria-current="page" href="{{route('home')}}">Home</a>
+                            <x-nav-link route-name="{{route('home')}}">Home</x-nav-link>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{route('post.create') == request()->url()? 'active':'' }} {{route('post.index') == request()->url()? 'active':'' }}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Post
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{route('post.create')}}">Create Post</a></li>
-                                <li><a class="dropdown-item" href="{{route('post.index')}}">Posts List</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
+                            <x-nav-link route-name="{{route('post.create')}}">Post Create</x-nav-link>
+{{--                            <x-nav-link route-name="post.create">Post Create</x-nav-link>--}}
+{{--                            <x-nav-link route-name="post.index">Post List</x-nav-link>--}}
+
+
+{{--                            <a class="nav-link dropdown-toggle {{route('post.create') == request()->url()? 'active':'' }} {{route('post.index') == request()->url()? 'active':'' }}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">--}}
+{{--                                Post--}}
+{{--                            </a>--}}
+{{--                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">--}}
+{{--                                <li><a class="dropdown-item" href="{{route('post.create')}}">Create Post</a></li>--}}
+{{--                                <li><a class="dropdown-item" href="{{route('post.index')}}">Posts List</a></li>--}}
+{{--                                <li><hr class="dropdown-divider"></li>--}}
+{{--                                <li><a class="dropdown-item" href="#">Something else here</a></li>--}}
+{{--                            </ul>--}}
+                        </li>
+                        <li class="nav-item">
+                            <x-nav-link route-name="{{route('post.index')}}">Post List</x-nav-link>
                         </li>
 
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{route('category.create') == request()->url()? 'active':'' }} {{route('category.index') == request()->url()? 'active':'' }}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Category
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{route('category.create')}}">Create Category</a></li>
-                                <li><a class="dropdown-item" href="{{route('category.index')}}">Category List</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
+
+                       @onlyAdmin
+                        <li class="nav-item">
+                            <x-nav-link route-name="{{route('category.create')}}">Category Create</x-nav-link>
                         </li>
+
+                        <li class="nav-item">
+                            <x-nav-link route-name="{{route('category.index')}}">Category List</x-nav-link>
+                        </li>
+                           @endonlyAdmin
+
+
+{{--                        <li class="nav-item dropdown">--}}
+{{--                            <a class="nav-link dropdown-toggle {{route('category.create') == request()->url()? 'active':'' }} {{route('category.index') == request()->url()? 'active':'' }}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">--}}
+{{--                                Category--}}
+{{--                            </a>--}}
+{{--                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">--}}
+{{--                                <li><a class="dropdown-item" href="{{route('category.create')}}">Create Category</a></li>--}}
+{{--                                <li><a class="dropdown-item" href="{{route('category.index')}}">Category List</a></li>--}}
+{{--                                <li><hr class="dropdown-divider"></li>--}}
+{{--                                <li><a class="dropdown-item" href="#">Something else here</a></li>--}}
+{{--                            </ul>--}}
+{{--                        </li>--}}
+
+                            <li class="nav-item">
+                                <x-nav-link route-name="{{route('photo.index')}}">My Photo Gallery</x-nav-link>
+{{--                                <a class="nav-link {{route('photo.index') == request()->url()? 'active':'' }}" aria-current="page" href="{{route('photo.index')}}">My Photo Gallery</a>--}}
+                            </li>
                         @endauth
                     </ul>
 

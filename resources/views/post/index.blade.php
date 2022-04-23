@@ -13,11 +13,13 @@
 
                         <div class="mb-4 d-flex justify-content-between align-items-start">
                             <div class="">
-
+                                @can('create',\App\Models\Post::class)
                                 <a href="{{route('post.create')}}" class="btn btn-sm  btn-outline-primary ">
                                     <i class="fas fa-candy-cane"></i>
                                     Post Create
                                 </a>
+                                @endcan
+
 
                                 @isset(request()->search)
                                     <a href="{{route('post.index')}}" class="btn btn-sm btn-outline-primary">
@@ -67,9 +69,15 @@
                                 <tbody>
                                 <tr>
                                     <td>{{$post->id}}</td>
-                                    <td class="small">{{\Illuminate\Support\Str::words($post->title,8)}}</td>
+                                    <td class="small">{{$post->short_title}}</td>
                                     <td class="text-nowrap">
-                                        @forelse($post->photos()->latest('id')->limit(3)->get() as $photo)
+{{--                                        @forelse($post->photos()->latest('id')->limit(3)->get() as $photo)--}}
+                                            @forelse($post->photos as $key=>$photo)
+                                                @if($key==3)
+                                                     @break
+                                                @endif
+
+
                                             <a class="venobox" data-gall="img{{$post->id}}" href="{{asset('storage/photo/'.$photo->name)}}">
                                                 <img src="{{asset('storage/thumbnail/'.$photo->name)}}" height="40" class="rounded-circle border-3 border-white shadow-sm list-thumbnail" alt="image alt"/>
                                             </a>
@@ -108,32 +116,32 @@
                                             <a href="{{route('post.show',$post->id)}}" class="btn btn-sm btn-outline-info">
                                                 <i class="fas fa-info-circle"></i>
                                             </a>
+
+                                            @can('update',$post)
                                             <a href="{{route('post.edit',$post->id)}}" class="btn btn-sm btn-outline-success">
                                                 <i class="fas fa-edit fa-fw"></i>
                                             </a>
+                                            @endcan
+
+                                            @can('delete',$post)
                                             <button form="postDeleteForm{{$post->id}}" class="btn btn-sm btn-outline-danger">
                                                 <i class="fas fa-trash fa-fw"></i>
                                             </button>
+                                            @endcan
 
                                         </div>
 
+                                        @can('delete',$post)
                                         <form action="{{route('post.destroy',$post->id)}} " id="postDeleteForm{{$post->id}}" method="post" >
                                             @csrf
                                             @method('delete')
 
                                         </form>
+                                        @endcan
 
                                     </td>
                                     <td>
-                                        <p class="mb-0 small">
-                                            <i class="fas fa-calendar text-primary"></i>
-                                            {{$post->created_at->format("d-M-Y")}}
-                                        </p>
-
-                                        <p class="mb-0 small">
-                                            <i class="fas fa-clock text-primary"></i>
-                                            {{$post->created_at->format("h:i a")}}
-                                        </p>
+                                        {!! $post->show_time !!}
                                     </td>
                                 </tr>
                                 </tbody>

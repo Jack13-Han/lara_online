@@ -13,14 +13,7 @@
                         <form action="{{route('post.store')}}" enctype="multipart/form-data"  method="post">
                             @csrf
 
-                            <div class="mb-3">
-                                <label for="" class="form-label">Post Title</label>
-                                <input type="text" class="form-control @error('title') is-invalid @enderror " value="{{ old('title') }}" name="title">
-
-                                @error('title')
-                                <p class="text-danger small">{{$message}}</p>
-                                @enderror
-                            </div>
+                            <x-input input-title="Post Title" name="title"></x-input>
 
                             <div class="mb-3">
                                 <label for="" class="form-label">Select Category</label>
@@ -61,7 +54,7 @@
 
                             <div class="mb-3">
                                 <label for="" class="form-label">Photo </label>
-                                <input type="file" class="form-control @error('photos') is-invalid @enderror " name="photos[]" accept="image/png,image/jpeg" multiple>
+                                <input type="file" class="form-control @error('phoxtos') is-invalid @enderror " name="photos[]" accept="image/png,image/jpeg" multiple>
 
                                 @error('photos')
                                 <p class="text-danger small">{{$message}}</p>

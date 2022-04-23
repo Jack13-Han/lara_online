@@ -18,6 +18,17 @@
 
 
                     {{request()->url()}}
+
+                        <hr>
+
+                        <x-alert></x-alert>
+                    <x-alert type="success" message="I'm Han Wai Htun"></x-alert>
+
+                        @hwh
+
+                        {{$categories}}
+{{--                        <x-alert type="primary" message="I'm Han Htun"></x-alert>--}}
+{{--                        <x-alert type="dark" message="I'm Han Wai "></x-alert>--}}
                 </div>
             </div>
         </div>
